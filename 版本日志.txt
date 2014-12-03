@@ -1,0 +1,6 @@
+
+
+
+2014年12月3日
+1：基于arcgisv3.11 创建版本库
+2: 整合simplermap for javascript 到arcgis for javascript，使用同一个init初始函数，引用一次js类库完成加载
