@@ -13,6 +13,7 @@ function (declare,GraphicsLayer,CarBean)
             this._map.addLayer(this._carLayer);
             //当前地图添加的车辆
             this._currCars = [];
+            //this._carMap = new
             //最后一次添加的车辆
             this._lastAddCar;
             //注册车辆点击事件
@@ -26,7 +27,7 @@ function (declare,GraphicsLayer,CarBean)
 
         //添加car
         addCar: function(carBean) {
-            this._lastAddCar = carBean._makeGraphic();
+            this._lastAddCar = carBean.graphic;
             this._carLayer.add(this._lastAddCar);
             this._currCars.push(this._lastAddCar);
 

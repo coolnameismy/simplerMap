@@ -24,6 +24,7 @@ define(["dojo/_base/declare","esri/symbols/PictureMarkerSymbol","esri/geometry/P
              this.color = options.color || 1;
              this.aspect = options.aspect || 0;
              this.icon =  options.icon || "";
+             this.graphic = this._makeGraphic();
             //图形属性
 //            this.graphicAngle = 0;
 //            this.graphicOffset = 0;
@@ -32,7 +33,6 @@ define(["dojo/_base/declare","esri/symbols/PictureMarkerSymbol","esri/geometry/P
 
             //this.makeGraphic
         },
-//        graphic : this.makeGraphic(),
         //获取Graphic
         _makeGraphic:function(){
             this.symbol = new esri.symbol.PictureMarkerSymbol(this.icon, 20, 33).setAngle(0).setOffset(0, 0);
