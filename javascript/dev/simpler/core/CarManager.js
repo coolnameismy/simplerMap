@@ -12,7 +12,6 @@ function (declare,GraphicsLayer,CarBean,SMHashTable)
             this._carLayer = new GraphicsLayer();
             this._map.addLayer(this._carLayer);
             //当前地图添加的车辆
-            this._currCars = [];
             this._carHashTable = new SMHashTable();
             //最后一次添加的车辆
             this._lastAddCar;

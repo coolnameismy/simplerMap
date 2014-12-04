@@ -8,10 +8,6 @@ define(["dojo/_base/declare","esri/symbols/PictureMarkerSymbol","esri/geometry/P
 //
         constructor: function (options) {
 
-            //检查是否被继承，重新实现了接口
-//            if(this.graphic == "undefined" ){
-//               // throw new Error("需要自己实现该类的graphic属性，类型是esri.Graphic");
-//            }
 
             //基础属性
              this.key = options.key || 0;
@@ -31,7 +27,13 @@ define(["dojo/_base/declare","esri/symbols/PictureMarkerSymbol","esri/geometry/P
 //            this.icon = "http://localhost/assets/map/image/cars/greencar.png";
             //其他属性
 
-            //this.makeGraphic
+            //检查是否被继承，重新实现了接口
+            if(this.graphic == undefined ){
+                throw new Error("需要自己实现该类的graphic属性，类型是esri.Graphic");
+            }
+            if(options.key == undefined || options.key ==""){
+                throw new Error("CarBean初始化Key不能为空 （key为生成的Graphic 的主键)");
+            }
         },
         //获取Graphic
         _makeGraphic:function(){
