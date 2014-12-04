@@ -53,10 +53,7 @@ define(["dojo/_base/declare","esri/symbols/PictureMarkerSymbol","esri/geometry/P
             infoTemplate.setContent(" <div> 速度:${speed}</div> <div> 车辆类型:${carType}</div> <div> 车牌号码:${carNo}</div> <div> 车牌颜色:${color}</div> ");
             //this.graphic = new esri.Graphic(this.geometry, this.symbol);
             this.graphic = new esri.Graphic(this.geometry, this.symbol, attr, infoTemplate);
-            this.graphic.prototype = {
-                //设置图标扩展属性
-                key: this.key
-            };
+
             //创建图像
             return this.graphic;
         }

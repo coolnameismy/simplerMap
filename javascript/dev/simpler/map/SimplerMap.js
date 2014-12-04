@@ -20,7 +20,6 @@ define(["dojo/_base/declare", "esri/map", "simpler/util/MapBase", "esri/layers/A
                 this.addLayer(tiled);
                 //mapLayers.push(tiled);
 
-
             },
             //地图外观配置
             InitMapStyle : function (map) {

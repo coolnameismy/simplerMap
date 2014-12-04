@@ -1,7 +1,7 @@
 ﻿ 
 
-define(["dojo/_base/declare", "esri/layers/GraphicsLayer", "simpler/model/CarBean"],
-function (declare,GraphicsLayer,CarBean)
+define(["dojo/_base/declare", "esri/layers/GraphicsLayer", "simpler/model/CarBean","simpler/util/SMHashTable"],
+function (declare,GraphicsLayer,CarBean,SMHashTable)
 {
     return declare("simpler.util.CarManager", null, {
         //构造函数
@@ -13,7 +13,7 @@ function (declare,GraphicsLayer,CarBean)
             this._map.addLayer(this._carLayer);
             //当前地图添加的车辆
             this._currCars = [];
-            //this._carMap = new
+            this._carHashTable = new SMHashTable();
             //最后一次添加的车辆
             this._lastAddCar;
             //注册车辆点击事件
@@ -29,16 +29,12 @@ function (declare,GraphicsLayer,CarBean)
         addCar: function(carBean) {
             this._lastAddCar = carBean.graphic;
             this._carLayer.add(this._lastAddCar);
-            this._currCars.push(this._lastAddCar);
-
+            this._carHashTable.set(carBean.key,this._lastAddCar);
         },
         //删除car
         removeCar: function(key) {
-             for(var i=0;i<this._currCars.length;i++){
-                 if(key == this._currCars[i].prototype.key){
-                     this._carLayer.remove(this._currCars[i]);
-                 }
-             }
+            var theCar = this._carHashTable.get(key);
+            this._carLayer.remove(theCar);
 
         },
         //修改car
