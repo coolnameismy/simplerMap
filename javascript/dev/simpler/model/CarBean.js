@@ -52,7 +52,8 @@ define(["dojo/_base/declare","esri/symbols/PictureMarkerSymbol","esri/geometry/P
             //信息窗口
             var infoTemplate = new esri.InfoTemplate();
             infoTemplate.setTitle("${carNo}");
-            infoTemplate.setContent(" <div> 速度:${speed}</div> <div> 车辆类型:${carType}</div> <div> 车牌号码:${carNo}</div> <div> 车牌颜色:${color}</div> ");
+            infoTemplate.setContent(" <div> 速度:${speed}</div> <div> 车辆类型:${carType}</div> <div> 车牌号码:${carNo}</div> <div> 车牌颜色:${color}</div> " +
+                                    "<div> 经度:${lng}   纬度:${lat}</div> ");
             //this.graphic = new esri.Graphic(this.geometry, this.symbol);
             this.graphic = new esri.Graphic(this.geometry, this.symbol, attr, infoTemplate);
 
