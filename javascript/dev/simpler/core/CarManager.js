@@ -26,7 +26,7 @@ function (declare,GraphicsLayer,CarBean)
 
         //添加car
         addCar: function(carBean) {
-            this._lastAddCar = carBean.makeGraphic();
+            this._lastAddCar = carBean._makeGraphic();
             this._carLayer.add(this._lastAddCar);
             this._currCars.push(this._lastAddCar);
 
@@ -38,6 +38,12 @@ function (declare,GraphicsLayer,CarBean)
                      this._carLayer.remove(this._currCars[i]);
                  }
              }
+
+        },
+        //修改car
+        UpdateCar: function(carBean) {
+//            this.removeCar(carBean.key);
+//            this.addCar(carBean);
 
         },
         //event
