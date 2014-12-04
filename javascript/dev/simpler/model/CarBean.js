@@ -8,7 +8,7 @@ define(["dojo/_base/declare","esri/symbols/PictureMarkerSymbol","esri/geometry/P
 //
         constructor: function (options) {
             //基础属性
-              this.id = options.id || 0;
+             this.key = options.key || 0;
              this.lat = options.lat || 0;
              this.lng = options.lng || 0;
              this.status = options.status || 0;
@@ -44,16 +44,10 @@ define(["dojo/_base/declare","esri/symbols/PictureMarkerSymbol","esri/geometry/P
             infoTemplate.setContent(" <div> 速度:${speed}</div> <div> 车辆类型:${carType}</div> <div> 车牌号码:${carNo}</div> <div> 车牌颜色:${color}</div> ");
             //this.graphic = new esri.Graphic(this.geometry, this.symbol);
             this.graphic = new esri.Graphic(this.geometry, this.symbol, attr, infoTemplate);
-//            var inforContent =  " <div> 速度："+ this.speed +"</div>"+
-//                " <div> 车辆类型："+ this.carType +"</div>"+
-//                " <div>车牌号码："+ this.carNo +"</div>"+
-//                " <div>车牌颜色"+ this.color +"</div>"+
-//                "<div>其他：</div>";
-//            this.graphic.prototype = {
-//                //设置地图中心点u
-//                title: this.carNo,
-//                content: inforContent
-//            };
+            this.graphic.prototype = {
+                //设置图标扩展属性
+                key: this.key
+            };
 
             //创建图像
 
