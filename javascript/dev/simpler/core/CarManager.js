@@ -3,7 +3,7 @@
 define(["dojo/_base/declare", "esri/layers/GraphicsLayer", "simpler/model/CarBean","simpler/util/SMHashTable","esri/geometry/Point"],
 function (declare,GraphicsLayer,CarBean,SMHashTable,Point)
 {
-    return declare("simpler.util.CarManager", null, {
+    return declare("simpler.core.CarManager", null, {
         //构造函数
         constructor: function (map) {
             //初始化数据
@@ -91,7 +91,10 @@ function (declare,GraphicsLayer,CarBean,SMHashTable,Point)
             //MapBase.ShowBestView();
         },
         //event
-
+        //当前地图车辆总数
+        ShowCarCount:function(){
+          return  this._carHashTable._count;
+        },
         //click
         carOnClick :function () {
             console.log("car Click!");

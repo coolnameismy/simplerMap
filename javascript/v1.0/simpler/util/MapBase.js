@@ -9,14 +9,13 @@ define([
 ], function (
   declare, Tiled
 ) {
-    return declare("jtjd.map.util.MapBase",null, {
+    return declare("simpler.util.MapBase",null, {
         constructor: function (map) {
             this._map = map;
             this._mapLayers = [];
             this._mapNavigation = new esri.toolbars.Navigation(map);
         },
        
-            
         //设置地图级别
         setMapZoom : function (zoom) {
             this._map.setZoom(zoom);
@@ -61,8 +60,11 @@ define([
         //下一视图
         ShowPrevViews: function () {
             this._mapNavigation.zoomToPrevExtent();
-        }
+        },
+        //最佳视图
+        ShowBestViews: function (leftTop,rightBotton) {
 
+        }
        
 
     });

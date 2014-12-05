@@ -1,5 +1,5 @@
 ﻿define(["dojo/_base/declare"],function(declare){
-    return declare("jtjd.map.util.GisConverter", null, {
+    return declare("simpler.util.GisConverter", null, {
         //构造函数
         constructor: function () {
 
