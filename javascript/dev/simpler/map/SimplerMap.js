@@ -1,16 +1,16 @@
 ﻿
 define(["dojo/_base/declare", "esri/map", "simpler/util/MapBase", "esri/layers/ArcGISTiledMapServiceLayer", "simpler/core/CarManager",
         "esri/layers/GraphicsLayer"],
-    function (declare, Map, MapBase,Tiled,CarManager,GraphicsLayer) {
+    function (declare, Map, MapBase,Tiled,CarLayerManager,GraphicsLayer) {
         return declare("simpler.map.SimplerMap", Map, {
             //构造函数
             constructor: function () {
                 //初始化默认地图图层
                 this.InitService();
                 //初始化基础功能类库
-                this.BaseFunction = new MapBase(this);
+                this.Basic = new MapBase(this);
                 //车辆管理服务类
-                this.carManager = new CarManager(this);
+                this.CarManager = new CarLayerManager(this);
 
             },
             

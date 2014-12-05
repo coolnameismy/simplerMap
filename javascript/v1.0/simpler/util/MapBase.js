@@ -27,25 +27,31 @@ define([
         },
         //删除当前地图
         removeAllMapLayers: function () {
-            var map1 = this._map;
+            var map = this._map;
             dojo.forEach(this._mapLayers, function (element, index) {
-                map1.removeLayer(element);
+                map.removeLayer(element);
             });
         },
         //切换地图
         changeMapLayer : function (type) {
-        this.removeAllMapLayers();
-        if (type == "HX") {
-            //鸿信地图
-            var hxLayers = new Tiled("http://202.102.112.17:6080/arcgis/rest/services/mapmercator/MapServer");
-            this._map.addLayer(hxLayers);
-            this._mapLayers.push(hxLayers);
+            this.removeAllMapLayers();
+            if (type == "HX") {
+                //鸿信地图
+                var hxLayers = new Tiled("http://202.102.112.17:6080/arcgis/rest/services/mapmercator/MapServer");
+                this._map.addLayer(hxLayers);
+                this._mapLayers.push(hxLayers);
             }
             if (type == "OSM") {
                 //街景地图层 OSM
                 var osmLayers = new esri.layers.OpenStreetMapLayer();
                 this._map.addLayer(osmLayers);
                 this._mapLayers.push(osmLayers);
+            }
+            if (type == "DX") {
+                //地形地图 TODO暂时不能使用
+                var dxLayers = new Tiled("http://server.arcgisonline.com/ArcGIS/rest/services/NGS_Topo_US_2D/MapServer");
+                this._map.addLayer(dxLayers,999);
+                this._mapLayers.push(dxLayers);
             }
         },
         //上一视图

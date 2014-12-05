@@ -1,0 +1,196 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+
+    <link rel="stylesheet" type="text/css" href="http://202.102.101.74:8012/simplerMap/javascript/v1.0/dijit/themes/tundra/tundra.css"/>
+    <link rel="stylesheet" type="text/css" href="http://202.102.101.74:8012/simplerMap/javascript/v1.0/esri/css/esri.css" />
+    <style>
+        html, body, #map {
+            height: 100%; width: 100%; margin: 0; padding: 0;
+        }
+    </style>
+
+
+    <script src="http://202.102.101.74:8012/simplerMap/javascript/v1.0/init.js"></script>
+    <!--<script src="http://localhost:83/simplerMap/javascript/dev/init.js"></script>-->
+    <script>
+        //初始化地图代码
+        var map;
+        dojo.ready(mapInit);
+        function mapInit() {
+            require([
+                       "simpler/map/SimplerMap"
+                    ],
+                   function (SimplerMap)
+                   {
+                        //初始化地图
+                        map = new SimplerMap("map", {
+                            center: [118, 30.5],
+                            zoom: 4,
+                            logo: false,
+                            //设置地图级别
+                            minZoom: 4,
+                            maxZoom: 18
+                        });
+                    }
+            );
+        }
+
+        function addCar()
+        {
+            var car1 = new simpler.model.CarBean({
+                lat: "32",
+                lng: "118",
+                status: "0",
+                speed: "80",
+                carType: "car",
+                carNo: "苏A21332",
+                color: "1",
+                aspect: "5",
+                key: "car1", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/greencar.png" //图片地址
+            });
+            //参数：lng, lat 经度和纬度 number
+            map.CarManager.addCar(car1);
+        }
+        function removeCar()
+        {
+            map.CarManager.removeCar("car1");
+        }
+        function updateCar()
+        {
+            var car1 = new simpler.model.CarBean({
+                lat: "20",
+                lng: "134",
+                status: "0",
+                speed: "100",
+                carType: "car",
+                carNo: "苏A21332",
+                color: "1",
+                aspect: "5",
+                key: "car1", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/graycar.png" //图片地址
+            });
+            map.CarManager.updateCar(car1);
+        }
+
+        function addCars()
+        {
+            var car2 = new simpler.model.CarBean({
+                lat: "30",
+                lng: "114",
+                status: "0",
+                speed: "100",
+                carType: "car",
+                carNo: "苏A999",
+                color: "1",
+                aspect: "5",
+                key: "car2", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/graycar.png" //图片地址
+            });
+            var car3 = new simpler.model.CarBean({
+                lat: "32",
+                lng: "115",
+                status: "0",
+                speed: "100",
+                carType: "car",
+                carNo: "苏A23132",
+                color: "1",
+                aspect: "5",
+                key: "car3", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/greencar.png" //图片地址
+            });
+            var car4 = new simpler.model.CarBean({
+                lat: "34",
+                lng: "116",
+                status: "0",
+                speed: "100",
+                carType: "car",
+                carNo: "苏A123213",
+                color: "1",
+                aspect: "5",
+                key: "car4", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/graycar.png" //图片地址
+            });
+            var cars = [car2,car3,car4];
+            map.CarManager.addCars(cars);
+        }
+        function removeCars()
+        {
+            var cars = ["car2","car3","car4"];
+            map.CarManager.removeCars(cars);
+        }
+        function removeAllCar()
+        {
+            map.CarManager.removeAllCar();
+        }
+        function updateCars()
+        {
+            var car2 = new simpler.model.CarBean({
+                lat: "32",
+                lng: "116",
+                status: "0",
+                speed: "100",
+                carType: "car",
+                carNo: "苏A999",
+                color: "1",
+                aspect: "5",
+                key: "car2", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/graycar.png" //图片地址
+            });
+            var car3 = new simpler.model.CarBean({
+                lat: "37",
+                lng: "115",
+                status: "0",
+                speed: "100",
+                carType: "car",
+                carNo: "苏A23132",
+                color: "1",
+                aspect: "5",
+                key: "car3", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/greencar.png" //图片地址
+            });
+            var car4 = new simpler.model.CarBean({
+                lat: "35",
+                lng: "126",
+                status: "0",
+                speed: "100",
+                carType: "car",
+                carNo: "苏A123213",
+                color: "1",
+                aspect: "5",
+                key: "car4", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/graycar.png" //图片地址
+            });
+            var cars = [car2,car3,car4];
+            map.CarManager.updateCars(cars);
+        }
+        function findCar(key){
+            //默认找到后地图放大到zoom=15，也可以指定地图级别 使用方法 map.CarManager.findCar(key，zoom);
+            map.CarManager.findCar(key);
+        }
+    </script>
+
+<body>
+    <div>
+        <input type="button" value="添加一辆车" onclick="addCar()"/>
+        <input type="button" value="删除一辆车" onclick="removeCar()" />
+        <input type="button" value="更新一辆车" onclick="updateCar()" />
+        <input type="button" value="添加一组车" onclick="addCars()" />
+        <input type="button" value="删除一组车" onclick="removeCars()" />
+        <input type="button" value="删除全部车"  onclick="removeAllCar()" />
+        <input type="button" value="更新一组车"  onclick="updateCars()" />
+        <input type="button" value="查找一辆车"  onclick="findCar('car1')" />
+        <!--<input type="button" value="查找一组车"  onclick="updateCars()" />-->
+    </div>
+    <div id="map"> </div>
+</body>
+</html>
+
+
+
