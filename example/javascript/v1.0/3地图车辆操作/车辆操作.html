@@ -174,6 +174,47 @@
             //默认找到后地图放大到zoom=15，也可以指定地图级别 使用方法 map.CarManager.findCar(key，zoom);
             map.CarManager.findCar(key);
         }
+        function findCars(key){
+
+            var car2 = new simpler.model.CarBean({
+                lat: "32",
+                lng: "116",
+                status: "0",
+                speed: "100",
+                carType: "car",
+                carNo: "苏A999",
+                color: "1",
+                aspect: "5",
+                key: "car2", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/graycar.png" //图片地址
+            });
+            var car3 = new simpler.model.CarBean({
+                lat: "37",
+                lng: "115",
+                status: "0",
+                speed: "100",
+                carType: "car",
+                carNo: "苏A23132",
+                color: "1",
+                aspect: "5",
+                key: "car3", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/greencar.png" //图片地址
+            });
+            var car4 = new simpler.model.CarBean({
+                lat: "35",
+                lng: "126",
+                status: "0",
+                speed: "100",
+                carType: "car",
+                carNo: "苏A123213",
+                color: "1",
+                aspect: "5",
+                key: "car4", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/graycar.png" //图片地址
+            });
+            var cars = [car2,car3,car4];
+            map.CarManager.findCars(cars);
+        }
     </script>
 
 <body>
@@ -186,7 +227,7 @@
         <input type="button" value="删除全部车"  onclick="removeAllCar()" />
         <input type="button" value="更新一组车"  onclick="updateCars()" />
         <input type="button" value="查找一辆车"  onclick="findCar('car1')" />
-        <!--<input type="button" value="查找一组车"  onclick="updateCars()" />-->
+        <input type="button" value="查找一组车"  onclick="findCars()" />
     </div>
     <div id="map"> </div>
 </body>
