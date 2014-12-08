@@ -8,37 +8,27 @@ describe("simplerMaps", function() {
 //    beforeEach(function () {
 //        suiteWideFoo = 0;
 //    });
-    //初始化地图代码
-    var map;
-    dojo.ready(mapInit);
-    function mapInit() {
-        require([
-                "simpler/map/SimplerMap"
-            ],
-            function (SimplerMap)
-            {
-                //初始化地图
-                map = new SimplerMap("map", {
-                    center: [118, 30.5],
-                    zoom: 4,
-                    logo: false,
-                    //设置地图级别
-                    minZoom: 4,
-                    maxZoom: 18
-                });
-            }
-        );
-    }
+
+
+
     it("SimplerInit", function() {
         //是否已声明
         expect(map).toBeDefined();
 
     });
-    it("Other", function() {
-
-        //是否已声明
-        //expect(map).toBeDefined();
-        return false;
+    it("getLeftBottomPoint", function() {
+        var points = [{"lng":118,"lat":32},{"lng":115,"lat":19},{"lng":112,"lat":22},{"lng":143,"lat":42}];
+        var expected = [{"lng":112,"lat":42},{"lng":143,"lat":19}];
+        var actual = map.GisKit.getLeftTopRightBottomPoint(points);
+        var testResult = true;
+        for(var i=0;i < actual.length;i++)
+        {
+            if(actual[i].lng != expected[i].lng)
+            testResult = false;
+            if(actual[i].lat != expected[i].lat)
+            testResult = false;
+        }
+        expect(testResult).toBeTruthy();
     });
 
 });

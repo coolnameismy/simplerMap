@@ -86,9 +86,9 @@ function (declare,GraphicsLayer,CarBean,SMHashTable,Point)
             }
         },
         //查找一组车
-        findCars:function(keys){
+        findCars:function(carBeans){
             //TODO:实现最佳视图显示
-            //MapBase.ShowBestView();
+            this._map.Basic.ShowBestViews(carBeans);
         },
         //event
         //当前地图车辆总数

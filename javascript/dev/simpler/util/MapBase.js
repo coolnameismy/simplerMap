@@ -4,10 +4,12 @@
 define([
   "dojo/_base/declare",
   "esri/layers/ArcGISTiledMapServiceLayer",
-   "esri/toolbars/navigation"
+  "esri/toolbars/navigation",
+  "simpler/util/GisKit",
+   "esri/geometry/Extent"
    
 ], function (
-  declare, Tiled
+  declare, Tiled,Navigation,GisKit,Extent
 ) {
     return declare("simpler.util.MapBase",null, {
         constructor: function (map) {
@@ -62,124 +64,23 @@ define([
             this._mapNavigation.zoomToPrevExtent();
         },
         //最佳视图
-        ShowBestViews: function (leftTop,rightBotton) {
-
+        ShowBestViews: function (carBeans) {
+            var points = [];
+            for(var i=0;i<carBeans.length;i++)
+            {
+                points.push({"lng" : carBeans[i].graphic.x , "lat": carBeans[i].graphic.y });
+            }
+            var leftTopRightBottomPoint =  this._map.GisKit.getLeftTopRightBottomPoint(points);
+            //通过extent解决最佳视图问题
+            var bestExtent =  new Extent({
+                "xmin":leftTopRightBottomPoint[0].lng,"ymin":leftTopRightBottomPoint[1].lat,"xmax":leftTopRightBottomPoint[1].lng,"ymax":leftTopRightBottomPoint[0].lat,
+                "spatialReference":{"wkid":4326}}
+            );
+            this._map.setExtent(bestExtent);
         }
        
 
     });
 });
-
-
-//function MapBase(map)
-//{
-//    require([
-//       "esri/layers/ArcGISTiledMapServiceLayer"
-//    ],
-//    function (Tiled) {
-
-//        this._map = map;
-//        //私有方法和属性
-
-
-//        //设置地图级别
-//        this.setMapZoom = function (zoom) {
-//            this._map.setZoom(zoom);
-//        }
-//        //设置地图中心点
-//        this.setMapCenter = function (lng, lat) {
-//            map.centerAt(new esri.geometry.Point(lng, lat));
-//        }
-
-//        //地图鹰眼显示
-//        //this.addOverviewMap = function() {
-//        //    var over = 
-//        //    {
-//        //        map: this._map,
-//        //        attachTo: "bottom-right",
-//        //        color: "#D84E13",
-//        //        expandFactor:2,
-//        //        baseLayer:new esri.layers.ArcGISTiledMapServiceLayer(carLayer)
-//        //        };
-//        //        var MapViewer = new esri.dijit.OverviewMap(over, dojo.byId("OverViewDiv"));
-//        //        MapViewer.startup();
-//        //    }
-
-//        //删除当前地图
-//        this.removeAllMapLayers = function () {
-//            dojo.forEach(mapLayers, function (element, index) {
-//                map.removeLayer(element);
-//            });
-//        }
-//        //切换地图
-//        this.changeMapLayer = function (type) {
-//            require([
-//           "esri/layers/ArcGISTiledMapServiceLayer"
-//            ],
-//             function (Tiled) {
-//                 this.removeAllMapLayers();
-
-//                 if (type == "HX") {
-//                     //鸿信地图
-//                     var hxLayers = new Tiled("http://202.102.112.17:6080/arcgis/rest/services/mapmercator/MapServer");
-//                     map.addLayer(hxLayers);
-//                     mapLayers.push(hxLayers);
-//                 }
-//                 if (type == "OSM") {
-//                     //街景地图层 OSM
-//                     var osmLayers = new esri.layers.OpenStreetMapLayer();
-//                     map.addLayer(osmLayers);
-//                     mapLayers.push(osmLayers);
-//                 }
-//             })
-//        }
-//        //切换地图
-//        this.changeMapLayer1 = function (type) {
-//            this.removeAllMapLayers();
-//            if (type == "HX") {
-//                //鸿信地图
-//                var hxLayers = new esri.layers.ArcGISTiledMapServiceLayer("http://202.102.112.17:6080/arcgis/rest/services/mapmercator/MapServer");
-//                map.addLayer(hxLayers);
-//                mapLayers.push(hxLayers);
-//            }
-//            if (type == "OSM") {
-//                //街景地图层 OSM
-//                var osmLayers = new esri.layers.OpenStreetMapLayer();
-//                map.addLayer(osmLayers);
-//                mapLayers.push(osmLayers);
-//            }
-//        }
-
-
-//    })
-//}
-    
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//共有方法和属性
-//MapBase.prototype =
-//{
-//     设置地图中心点
-//    setMapCenter: function (lng, lat) {
-//        map.centerAt(new esri.geometry.Point(lng, lat));
-//    }
-//}
-//静态方法
-//MapBase.info = function () {
-//    console.log("thie is map base function")
-//}
-
 
  
