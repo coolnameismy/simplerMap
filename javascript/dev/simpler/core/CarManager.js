@@ -31,7 +31,7 @@ function (declare,GraphicsLayer,CarBean,SMHashTable,Point)
                 updateCar(carBean);
             }
             else{
-                this._lastAddCar = carBean.graphic;
+                this._lastAddCar = carBean.makeGraphic();
                 this._carLayer.add(this._lastAddCar);
                 this._carHashTable.set(carBean.key,this._lastAddCar);
             }
@@ -86,8 +86,16 @@ function (declare,GraphicsLayer,CarBean,SMHashTable,Point)
             }
         },
         //查找一组车
-        findCars:function(carBeans){
-            //TODO:实现最佳视图显示
+        findCars:function(keys){
+            var carBeans = [];
+            for(var i=0;i<keys.length;i++)
+            {
+                var carBean =  this._carHashTable.get(keys[i]);
+                if(carBean != "")
+                {
+                    carBeans.push(carBean);
+                }
+            }
             this._map.Basic.ShowBestViews(carBeans);
         },
         //event

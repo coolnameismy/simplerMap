@@ -2,17 +2,13 @@
  * Created by liuyanwei on 2014/12/3.
  */
 
-define(["dojo/_base/declare","esri/symbols/PictureMarkerSymbol","esri/geometry/Point","esri/geometry/Point","esri/graphic"],function(declare){
-    return declare("simpler.model.CarBean",null,{
+define(["dojo/_base/declare","simpler/model/BeanBase","esri/symbols/PictureMarkerSymbol","esri/geometry/Point","esri/geometry/Point","esri/graphic"],function(declare,BeanBase){
+    return declare("simpler.model.CarBean",BeanBase,{
 //
 //
         constructor: function (options) {
 
-
-            //基础属性
-             this.key = options.key || 0;
-             this.lat = options.lat || 0;
-             this.lng = options.lng || 0;
+             //属性
              this.status = options.status || 0;
              this.speed = options.speed || 0;
              this.carType = options.carType || "car";
@@ -20,23 +16,10 @@ define(["dojo/_base/declare","esri/symbols/PictureMarkerSymbol","esri/geometry/P
              this.color = options.color || 1;
              this.aspect = options.aspect || 0;
              this.icon =  options.icon || "";
-             this.graphic = this._makeGraphic();
-            //图形属性
-//            this.graphicAngle = 0;
-//            this.graphicOffset = 0;
-//            this.icon = "http://localhost/assets/map/image/cars/greencar.png";
-            //其他属性
 
-            //检查是否被继承，重新实现了接口
-            if(this.graphic == undefined ){
-                throw new Error("需要自己实现该类的graphic属性，类型是esri.Graphic");
-            }
-            if(options.key == undefined || options.key ==""){
-                throw new Error("CarBean初始化Key不能为空 （key为生成的Graphic 的主键)");
-            }
         },
         //获取Graphic
-        _makeGraphic:function(){
+        makeGraphic:function(){
             this.symbol = new esri.symbol.PictureMarkerSymbol(this.icon, 20, 33).setAngle(0).setOffset(0, 0);
             this.geometry = esri.geometry.Point(this.lng, this.lat);
             var attr = {

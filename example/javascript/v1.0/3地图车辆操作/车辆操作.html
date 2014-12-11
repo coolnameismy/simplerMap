@@ -174,46 +174,16 @@
             //默认找到后地图放大到zoom=15，也可以指定地图级别 使用方法 map.CarManager.findCar(key，zoom);
             map.CarManager.findCar(key);
         }
-        function findCars(key){
-
-            var car2 = new simpler.model.CarBean({
-                lat: "32",
-                lng: "116",
-                status: "0",
-                speed: "100",
-                carType: "car",
-                carNo: "苏A999",
-                color: "1",
-                aspect: "5",
-                key: "car2", //自己定义非重复的id
-                icon: "http://202.102.101.74:8012/assets/icon/cars/graycar.png" //图片地址
-            });
-            var car3 = new simpler.model.CarBean({
-                lat: "37",
-                lng: "115",
-                status: "0",
-                speed: "100",
-                carType: "car",
-                carNo: "苏A23132",
-                color: "1",
-                aspect: "5",
-                key: "car3", //自己定义非重复的id
-                icon: "http://202.102.101.74:8012/assets/icon/cars/greencar.png" //图片地址
-            });
-            var car4 = new simpler.model.CarBean({
-                lat: "35",
-                lng: "126",
-                status: "0",
-                speed: "100",
-                carType: "car",
-                carNo: "苏A123213",
-                color: "1",
-                aspect: "5",
-                key: "car4", //自己定义非重复的id
-                icon: "http://202.102.101.74:8012/assets/icon/cars/graycar.png" //图片地址
-            });
-            var cars = [car2,car3,car4];
-            map.CarManager.findCars(cars);
+        function findCars(){
+            var keys = ["car2","car3","car4"];
+            //首先添加一组作为查找对象
+            this.addCars();
+            //查找一组车
+            map.CarManager.findCars(keys);
+            /*   var extent = new esri.geometry.Extent({
+             "xmin":112.68,"ymin":19,"xmax":143,"ymax":42,
+             "spatialReference":{"wkid":4326}
+            });  */
         }
     </script>
 

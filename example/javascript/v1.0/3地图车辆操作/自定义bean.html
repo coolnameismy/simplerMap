@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+
+    <link rel="stylesheet" type="text/css"
+          href="http://202.102.101.74:8012/simplerMap/javascript/v1.0/dijit/themes/tundra/tundra.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="http://202.102.101.74:8012/simplerMap/javascript/v1.0/esri/css/esri.css"/>
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+    <!--<script src="http://202.102.101.74:8012/simplerMap/javascript/v1.0/init.js"></script>-->
+    <script src="http://localhost:83/simplerMap/javascript/dev/init.js"></script>
+    <script>
+        var MyCarBean;
+
+        function OverrideBean() {
+            require([
+                        "simpler/model/BeanBase",
+                        "dojo/_base/declare"
+                    ],
+                    function (BeanBase) {
+                        var declare = require("dojo/_base/declare");
+                        MyCarBean = declare(BeanBase, {
+                            //构造函数
+                            constructor: function (options) {
+                                this.status = options.status || 0;
+                                this.speed = options.speed || 0;
+                                this.carType = options.carType || "car";
+                                this.carNo = options.carNo || "";
+                                this.color = options.color || 1;
+                                this.aspect = options.aspect || 0;
+                                this.icon = options.icon || "";
+                            },
+                            makeGraphic: function () {
+                                this.symbol = new esri.symbol.PictureMarkerSymbol(this.icon, 20, 33).setAngle(0).setOffset(0, 0);
+                                this.geometry = esri.geometry.Point(this.lng, this.lat);
+                                //需要把字段添加到属性中，这样在infoTemplate才可以动态绑定到字段的值
+                                var attr = {
+                                    "carNo": this.carNo,
+                                    "speed": this.speed,
+                                    "lat": this.lat,
+                                    "lng": this.lng,
+                                    "status": this.status,
+                                    "carType": this.carType,
+                                    "color": this.color,
+                                    "aspect": this.aspect
+                                };
+                                //信息窗口
+                                var infoTemplate = new esri.InfoTemplate();
+                                infoTemplate.setTitle("${carNo}");
+                                infoTemplate.setContent(" <div> 速度:${speed}</div> <div> 车辆类型:${carType}</div> <div> 车牌号码:${carNo}</div> <div> 车牌颜色:${color}</div> " +
+                                        "<div> 经度:${lng}   纬度:${lat}</div> ");
+                                //this.graphic = new esri.Graphic(this.geometry, this.symbol);
+                                this.graphic = new esri.Graphic(this.geometry, this.symbol, attr, infoTemplate);
+
+                                //创建图像
+                                return this.graphic;
+                            }
+                        });
+                    })
+        }
+
+
+        //初始化地图代码
+        var map;
+        dojo.ready(mapInit);
+        function mapInit() {
+            require([
+                        "simpler/map/SimplerMap"
+                    ],
+                    function (SimplerMap) {
+                        //初始化地图
+                        map = new SimplerMap("map", {
+                            center: [118, 30.5],
+                            zoom: 4,
+                            logo: false,
+                            //设置地图级别
+                            minZoom: 4,
+                            maxZoom: 18
+                        });
+                        //重构bean，声明自己的bean类型
+                        OverrideBean();
+                    }
+            );
+        }
+
+        function addCar() {
+            var car1 = new MyCarBean({
+                lat: "32",
+                lng: "118",
+                status: "0",
+                speed: "80",
+                carType: "car",
+                carNo: "苏A21332",
+                color: "1",
+                aspect: "5",
+                key: "car1", //自己定义非重复的id
+                icon: "http://202.102.101.74:8012/assets/icon/cars/greencar.png" //图片地址
+            });
+            //参数：lng, lat 经度和纬度 number
+            map.CarManager.addCar(car1);
+        }
+
+
+    </script>
+
+<body>
+<div>
+    <input type="button" value="添加一辆车" onclick="addCar()"/>
+
+</div>
+<div id="map"></div>
+</body>
+</html>
+
+
+

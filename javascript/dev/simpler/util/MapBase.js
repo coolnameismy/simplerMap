@@ -63,20 +63,19 @@ define([
         ShowPrevViews: function () {
             this._mapNavigation.zoomToPrevExtent();
         },
+
         //最佳视图
         ShowBestViews: function (carBeans) {
             var points = [];
             for(var i=0;i<carBeans.length;i++)
             {
-                points.push({"lng" : carBeans[i].graphic.x , "lat": carBeans[i].graphic.y });
+                points.push({"lng" : carBeans[i].geometry.x , "lat": carBeans[i].geometry.y });
             }
-            var leftTopRightBottomPoint =  this._map.GisKit.getLeftTopRightBottomPoint(points);
+
+            //修正最佳视图到百分比
             //通过extent解决最佳视图问题
-            var bestExtent =  new Extent({
-                "xmin":leftTopRightBottomPoint[0].lng,"ymin":leftTopRightBottomPoint[1].lat,"xmax":leftTopRightBottomPoint[1].lng,"ymax":leftTopRightBottomPoint[0].lat,
-                "spatialReference":{"wkid":4326}}
-            );
-            this._map.setExtent(bestExtent);
+            this._map.setExtent(this._map.GisKit.pointsToExtent(points,0.8));
+           // this._map.setZoom(this._map.getZoom()-1);
         }
        
 
