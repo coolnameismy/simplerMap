@@ -16,30 +16,292 @@
     </style>
 
 
-    <script src="http://202.102.101.74:8012/simplerMap/javascript/v1.0/init.js"></script>
-    <!--<script src="http://localhost:83/simplerMap/javascript/dev/init.js"></script>-->
+    <!--<script src="http://202.102.101.74:8012/simplerMap/javascript/v1.0/init.js"></script>-->
+    <script src="http://localhost:83/simplerMap/javascript/dev/init.js"></script>
     <script>
-        //初始化地图代码
-        dojo.ready(mapInit);
-        function mapInit() {
+    var MyCarBean;
+    var MyClusterBean;
 
-            require([
-                        "simpler/map/SimplerMap"
-                    ],
-                    function (SimplerMap)
-                   {
-                        //初始化地图
-                        map = new SimplerMap("map", {
-                            center: [118, 30.5],
-                            zoom: 4,
-                            logo: false,
-                            //设置地图级别
-                            minZoom: 4,
-                            maxZoom: 18
-                        });
+    var map;
+    var clusterLayer;
+
+    function OverrideBean() {
+        require([
+                    "simpler/model/BeanBase",
+                    "simpler/model/ClusterBeanBase",
+                    "dojo/_base/declare",
+                    "esri/symbols/TextSymbol",
+                    "esri/Color"
+
+                ],
+                function (BeanBase,ClusterBeanBase,declare,TextSymbol,Color) {
+                    MyCarBean = declare(BeanBase, {
+                        //构造函数
+                        constructor: function (options) {
+                            this.status = options.status || 0;
+                            this.speed = options.speed || 0;
+                            this.carType = options.carType || "car";
+                            this.carNo = options.carNo || "";
+                            this.color = options.color || 1;
+                            this.aspect = options.aspect || 0;
+                            this.icon = options.icon || "";
+                        },
+                        makeGraphic: function () {
+                            this.symbol = new esri.symbol.PictureMarkerSymbol(this.icon, 20, 33).setAngle(0).setOffset(0, 0);
+                            this.geometry = esri.geometry.Point(this.lng, this.lat);
+                            //需要把字段添加到属性中，这样在infoTemplate才可以动态绑定到字段的值
+                            var attr = {
+                                "carNo": this.carNo,
+                                "speed": this.speed,
+                                "lat": this.lat,
+                                "lng": this.lng,
+                                "status": this.status,
+                                "carType": this.carType,
+                                "color": this.color,
+                                "aspect": this.aspect
+                            };
+                            //信息窗口
+                            var infoTemplate = new esri.InfoTemplate();
+                            infoTemplate.setTitle("${carNo}");
+                            infoTemplate.setContent(" <div> 速度:${speed}</div> <div> 车辆类型:${carType}</div> <div> 车牌号码:${carNo}</div> <div> 车牌颜色:${color}</div> " +
+                                    "<div> 经度:${lng}   纬度:${lat}</div> ");
+                            //this.graphic = new esri.Graphic(this.geometry, this.symbol);
+                            this.graphic = new esri.Graphic(this.geometry, this.symbol, attr, infoTemplate);
+
+                            //创建图像
+                            return this.graphic;
+                        }
+                    });
+                    MyClusterBean = declare(ClusterBeanBase, {
+                        //构造函数
+                        constructor: function (options) {
+
+                        },
+                        makeGraphics: function () {
+                            var graphics = [];
+                            if(this.isClustered)
+                            {
+                                //聚集图标
+                                var symbol = new esri.symbol.PictureMarkerSymbol(this.icon, 32, 32).setAngle(0).setOffset(0, 15);
+                                var geometry = esri.geometry.Point(this.lng, this.lat);
+                                //需要把字段添加到属性中，这样在infoTemplate才可以动态绑定到字段的值
+                                var attr = {
+                                    "count": this.beans.length
+                                };
+                                //信息窗口
+                                var infoTemplate = new esri.InfoTemplate();
+                                infoTemplate.setTitle("${count}");
+                                infoTemplate.setContent(" <div>共有车辆::${count}</div>");
+                                var graphic = new esri.Graphic(geometry, symbol, attr, infoTemplate);
+                                graphics.push(graphic);
+                                //数量
+                                var label = new TextSymbol(this.beans.length)
+                                        .setColor(new Color("#fff"))
+                                        .setOffset(0,10);
+                                var labelattr = {
+                                    "count": this.beans.length
+                                };
+                                graphics.push(new esri.Graphic(geometry,label,labelattr,infoTemplate));
+
+                            }
+                            else
+                            {
+                                //非聚集图标
+                                for(var i=0;i<this.beans.length;i++)
+                                {
+                                    //检查是否有方法makeGraphic
+                                    graphics.push(this.beans[i].makeGraphic());
+                                }
+                            }
+                            return graphics;
+                        }
+                    });
+                })
+          }
+
+
+        require([
+            "dojo/parser",
+            "dojo/ready",
+            "dojo/_base/array",
+            "esri/Color",
+            "dojo/dom-style",
+            "dojo/query",
+
+            "esri/map",
+            "esri/request",
+            "esri/graphic",
+            "esri/geometry/Extent",
+
+            "esri/symbols/SimpleMarkerSymbol",
+            "esri/symbols/SimpleFillSymbol",
+            "esri/symbols/PictureMarkerSymbol",
+            "esri/renderers/ClassBreaksRenderer",
+
+            "esri/layers/GraphicsLayer",
+            "esri/SpatialReference",
+            "esri/dijit/PopupTemplate",
+            "esri/geometry/Point",
+            "esri/geometry/webMercatorUtils",
+
+            "simpler/core/ClusterLayer",
+
+            "dijit/layout/BorderContainer",
+            "dijit/layout/ContentPane",
+            "dojo/domReady!"
+        ], function(
+                parser, ready, arrayUtils, Color, domStyle, query,
+                Map, esriRequest, Graphic, Extent,
+                SimpleMarkerSymbol, SimpleFillSymbol, PictureMarkerSymbol, ClassBreaksRenderer,
+                GraphicsLayer, SpatialReference, PopupTemplate, Point, webMercatorUtils,
+                ClusterLayer
+                ) {
+            ready(function() {
+                parser.parse();
+
+                OverrideBean();
+
+                var popupOptions = {
+                    "markerSymbol": new SimpleMarkerSymbol("circle", 20, null, new Color([0, 0, 0, 0.25])),
+                    "marginLeft": "20",
+                    "marginTop": "20"
+                };
+                map = new Map("map", {
+                    basemap: "oceans",
+                    center: [106.542556, 29.568679],
+                    zoom: 6
+                });
+
+                map.on("load", function() {
+                    // hide the popup's ZoomTo link as it doesn't make sense for cluster features
+                    domStyle.set(query("a.action.zoomTo")[0], "display", "none");
+
+                    // get the latest 1000 photos from instagram/laguna beach
+                    var photos = esriRequest({
+                        //"url": "1000-photos.json",
+                        "url": "getTreeArrayData.json",
+                        "handleAs": "json"
+                    });
+                    photos.then(addClusters, error);
+                });
+
+                function addClusters(resp) {
+                    var wgs = new SpatialReference({
+                        "wkid": 4326
+                    });
+                    var data = [];
+                    for(var i=0;i<resp.length;i++)
+                    {
+                        try{
+                            var car = new MyCarBean({
+                                lat: resp[i].LAST_LATITUDE,
+                                lng: resp[i].LAST_LONGITUDE,
+                                status: "0",
+                                speed: "80",
+                                carType: "car",
+                                carNo: resp[i].CAR_NO,
+                                color: "1",
+                                aspect: "5",
+                                key: resp[i].KEY_ID,
+                                icon: "http://202.102.101.74:8012/assets/icon/cars/greencar.png" //图片地址
+                            });
+                            if(car != undefined)   data.push(car);
+                        }
+                        catch(err){
+                            alert(err);
+                        }
                     }
-            );
-        }
+
+                    // popupTemplate to work with attributes specific to this dataset
+                    var popupTemplate = new PopupTemplate({
+                        "title": "",
+                        "fieldInfos": [{
+                            "fieldName": "Caption",
+                            visible: true
+                        }, {
+                            "fieldName": "Name",
+                            "label": "By",
+                            visible: true
+                        }, {
+                            "fieldName": "Link",
+                            "label": "On Instagram",
+                            visible: true
+                        }],
+                        "mediaInfos": [{
+                            "title": "",
+                            "caption": "",
+                            "type": "image",
+                            "value": {
+                                "sourceURL": "{Image}",
+                                "linkURL": "{Link}"
+                            }
+                        }]
+                    });
+
+                    // cluster layer that uses OpenLayers style clustering
+                    clusterLayer = new ClusterLayer({
+                        "data": data,
+                        "distance": 100,
+                        "id": "clusters",
+                        "labelColor": "#fff",
+                        "labelOffset": 10,
+                        "resolution": map.extent.getWidth() / map.width,
+                        "singleColor": "#888",
+
+                        "CbeanType":MyClusterBean,
+                        "beanType":MyCarBean
+                    });
+                    var defaultSym = new SimpleMarkerSymbol().setSize(4);
+                    var renderer = new ClassBreaksRenderer(defaultSym, "clusterCount");
+
+                    var picBaseUrl = "http://static.arcgis.com/images/Symbols/Shapes/";
+                    var blue = new PictureMarkerSymbol(picBaseUrl + "BluePin1LargeB.png", 32, 32).setOffset(0, 15);
+                    var green = new PictureMarkerSymbol(picBaseUrl + "GreenPin1LargeB.png", 64, 64).setOffset(0, 15);
+                    var red = new PictureMarkerSymbol(picBaseUrl + "RedPin1LargeB.png", 72, 72).setOffset(0, 15);
+                    renderer.addBreak(0, 2, blue);
+                    renderer.addBreak(2, 200, green);
+                    renderer.addBreak(200, 1001, red);
+
+                    clusterLayer.setRenderer(renderer);
+                    map.addLayer(clusterLayer);
+
+                    // close the info window when the map is clicked
+                    /*  map.on("click", cleanUp);
+                    // close the info window when esc is pressed
+                    map.on("key-down", function(e) {
+                        if (e.keyCode === 27) {
+                            cleanUp();
+                        }
+                    });*/
+                }
+
+                function cleanUp() {
+                    map.infoWindow.hide();
+                    clusterLayer.clearSingles();
+                }
+
+                function error(err) {
+                    console.log("something failed: ", err);
+                }
+
+                // show cluster extents...
+                // never called directly but useful from the console
+                window.showExtents = function() {
+                    var extents = map.getLayer("clusterExtents");
+                    if ( extents ) {
+                        map.removeLayer(extents);
+                    }
+                    extents = new GraphicsLayer({ id: "clusterExtents" });
+                    var sym = new SimpleFillSymbol().setColor(new Color([205, 193, 197, 0.5]));
+
+                    arrayUtils.forEach(clusterLayer._clusters, function(c, idx) {
+                        var e = c.attributes.extent;
+                        extents.add(new Graphic(new Extent(e[0], e[1], e[2], e[3], map.spatialReference), sym));
+                    }, this);
+                    map.addLayer(extents, 0);
+                };
+            });
+        });
     </script>
 
 <body>
