@@ -12,7 +12,7 @@ define(["dojo/_base/declare","simpler/model/BeanBase","esri/symbols/PictureMarke
             //属性
             this.beans = [];
             this.isClustered = true;
-            this.icon = "http://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png";
+            this.icon = "http://static.arcgis.com/images/Symbols/Shapes/GreenPin1LargeB.png";
         },
         //获取Graphics
         makeGraphics:function(){

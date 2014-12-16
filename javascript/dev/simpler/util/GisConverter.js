@@ -1,23 +1,20 @@
-﻿define(["dojo/_base/declare"],function(declare){
-    return declare("simpler.util.GisConverter", null, {
-        //构造函数
-        constructor: function () {
+﻿//静态工具类
 
-        },
-        //投影坐标转换为地理坐标
-        MercatorToLngLat:function(X,Y) {
-        var PI = Math.PI;
-        var  x = parseFloat(X)/20037508.34*180;  
-        var y = parseFloat(Y) / 20037508.34 * 180;
-        y = 180 / parseFloat(PI) * (2 * Math.atan(Math.exp(parseFloat(y) * parseFloat(PI) / 180)) - parseFloat(PI) / 2);
-        return x + ":" + y;
-        },
-        LngLatToMercator : function(X,Y) {
-            var PI = Math.PI;
-            var  x = parseFloat(X) * 20037508.34*180;
-            var  y = parseFloat(Y) *  20037508.34 * 180;
-            y = 180 / parseFloat(PI) * (2 * Math.atan(Math.exp(parseFloat(y) * parseFloat(PI) / 180)) - parseFloat(PI) / 2);
-            return x + ":" + y;
-       }
+define(["dojo/_base/declare","esri/geometry/webMercatorUtils"],function(declare,webMercatorUtils){
+    return ("simpler.util.GisConverter", null, {
+
+        //将一组grometry的路径转化为一组经纬度数组
+        ConvertToLatlngArray:function(geometry)
+        {
+            var latlngArray = [];
+            for(var i=0;i<geometry.paths[0].length;i++)
+            {
+                var point = webMercatorUtils.xyToLngLat(geometry.paths[0][i][0], geometry.paths[0][i][1]);
+                var latlng = {lng:point[0],lat:point[1]};
+                latlngArray.push(latlng);
+            }
+             return latlngArray
+        }
+
     }) 
 })

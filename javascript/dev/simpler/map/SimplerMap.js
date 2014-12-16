@@ -1,7 +1,7 @@
 ﻿
 define(["dojo/_base/declare", "esri/map", "simpler/util/MapBase", "esri/layers/ArcGISTiledMapServiceLayer", "simpler/core/CarManager",
-        "esri/layers/GraphicsLayer","simpler/util/GisKit"],
-    function (declare, Map, MapBase,Tiled,CarLayerManager,GraphicsLayer,UnitGisKit) {
+        "esri/layers/GraphicsLayer","simpler/util/GisKit","simpler/core/DrawGrahicManager","esri/SpatialReference"],
+    function (declare, Map, MapBase,Tiled,CarLayerManager,GraphicsLayer,UnitGisKit,DrawGrahicManager,SpatialReference) {
         return declare("simpler.map.SimplerMap", Map, {
             //构造函数
             constructor: function () {
@@ -11,9 +11,12 @@ define(["dojo/_base/declare", "esri/map", "simpler/util/MapBase", "esri/layers/A
                 this.Basic = new MapBase(this);
                 //车辆管理服务类
                 this.CarManager = new CarLayerManager(this);
+                //画图层
+                this.DrawManager = new DrawGrahicManager(this);
                 //GisKit工具
                 this.GisKit = new UnitGisKit();
-
+                //定义空间坐标系
+                this.sr4326 = new SpatialReference(4326);
             },
             
             //地图服务配置

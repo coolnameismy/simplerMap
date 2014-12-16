@@ -24,30 +24,6 @@ define([
     ) {
     return declare([GraphicsLayer], {
         constructor: function (options) {
-            // options:
-            //   data:  Object[]
-            //     Array of objects. Required. Object are required to have properties named x, y and attributes. The x and y coordinates have to be numbers that represent a points coordinates.
-            //   distance:  Number?
-            //     Optional. The max number of pixels between points to group points in the same cluster. Default value is 50.
-            //   labelColor:  String?
-            //     Optional. Hex string or array of rgba values used as the color for cluster labels. Default value is #fff (white).
-            //   labelOffset:  String?
-            //     Optional. Number of pixels to shift a cluster label vertically. Defaults to -5 to align labels with circle symbols. Does not work in IE.
-            //   resolution:  Number
-            //     Required. Width of a pixel in map coordinates. Example of how to calculate:
-            //     map.extent.getWidth() / map.width
-            //   showSingles:  Boolean?
-            //     Optional. Whether or graphics should be displayed when a cluster graphic is clicked. Default is true.
-            //   singleSymbol:  MarkerSymbol?
-            //     Marker Symbol (picture or simple). Optional. Symbol to use for graphics that represent single points. Default is a small gray SimpleMarkerSymbol.
-            //   singleTemplate:  PopupTemplate?
-            //     PopupTemplate</a>. Optional. Popup template used to format attributes for graphics that represent single points. Default shows all attributes as "attribute = value" (not recommended).
-            //   maxSingles:  Number?
-            //     Optional. Threshold for whether or not to show graphics for points in a cluster. Default is 1000.
-            //   webmap:  Boolean?
-            //     Optional. Whether or not the map is from an ArcGIS.com webmap. Default is false.
-            //   spatialReference:  SpatialReference?
-            //     Optional. Spatial reference for all graphics in the layer. This has to match the spatial reference of the map. Default is 102100. Omit this if the map uses basemaps in web mercator.
 
             this._clusterTolerance = options.distance || 50;
             this._clusterNumberCondition = options.clusterNumberCondition || 2;
@@ -58,18 +34,8 @@ define([
             this._clusterLabelOffset = (options.hasOwnProperty("labelOffset")) ? options.labelOffset : -5;
             // graphics that represent a single point
             this._singles = []; // populated when a graphic is clicked
-            this._showSingles = options.hasOwnProperty("showSingles") ? options.showSingles : true;
-            // symbol for single graphics
-            var SMS = SimpleMarkerSymbol;
-            this._singleSym = options.singleSymbol || new SMS("circle", 6, null, new Color("#888"));
-
-            this._maxSingles = options.maxSingles || 1000;
-
-            this._webmap = options.hasOwnProperty("webmap") ? options.webmap : false;
-
-            this._sr = options.spatialReference || new SpatialReference({ "wkid": 102100 });
-
-            this._zoomEnd = null;
+            this._showSingles =  true;
+            this._clusterResolution = options.resolution;
             //指定聚集和非聚合的bean类型
             this._CbeanType = options.CbeanType;
             this._beanType = options.beanType;
@@ -150,31 +116,6 @@ define([
             this._singles.length = 0;
         },
 
-            /*  onClick: function (e) {
-            e.stopPropagation();
-            this._map.infoWindow.show(e.graphic.geometry);
-
-            // remove any previously showing single features
-           this.clearSingles(this._singles);
-
-            // find single graphics that make up the cluster that was clicked
-            // would be nice to use filter but performance tanks with large arrays in IE
-            var singles = [];
-            for (var i = 0, il = this._beanData.length; i < il; i++) {
-                if (e.graphic.attributes.clusterId == this._beanData[i].attributes.clusterId) {
-                    singles.push(this._beanData[i]);
-                }
-            }
-            if (singles.length > this._maxSingles) {
-                alert("Sorry, that cluster contains more than " + this._maxSingles + " points. Zoom in for more detail.");
-                return;
-            } else {
-                // stop the click from bubbling to the map
-                e.stopPropagation();
-                this._map.infoWindow.show(e.graphic.geometry);
-                this._addSingles(singles);
-            }
-        },*/
 
         // internal methods
         _clusterGraphics: function () {
@@ -205,13 +146,10 @@ define([
         _clusterTest: function (bean, cbean) {
 
             //墨卡托坐标
-
             bean.x =  bean.getMercatorX();
             bean.y =  bean.getMercatorY();
-
             cbean.x = cbean.getMercatorX();
             cbean.y = cbean.getMercatorY();
-
             var distance = (
                 Math.sqrt(
                         Math.pow((cbean.x - bean.x), 2) + Math.pow((cbean.y - bean.y), 2)
@@ -220,13 +158,8 @@ define([
             return (distance <= this._clusterTolerance);
         },
 
-        // points passed to clusterAddPoint should be included
-        // in an existing cluster
-        // also give the point an attribute called clusterId
-        // that corresponds to its cluster
+
         _clusterAddPoint: function (bean, cbean) {
-
-
             var count, lng, lat;
             count = cbean.beans.length;
             lng = (bean.lng + (cbean.lng * count)) / (count + 1);
@@ -235,27 +168,6 @@ define([
             cbean.lng = lng;
             cbean.beans.push(bean);
 
-            // build an extent that includes all points in a cluster
-            // extents are for debug/testing only...not used by the layer
-           /* if (bean.lng < cluster.attributes.extent[0]) {
-                cluster.attributes.extent[0] = bean.lng;
-            } else if (bean.lng > cluster.attributes.extent[2]) {
-                cluster.attributes.extent[2] = bean.lng;
-            }
-            if (bean.lat < cluster.attributes.extent[1]) {
-                cluster.attributes.extent[1] = bean.lat;
-            } else if (bean.lat > cluster.attributes.extent[3]) {
-                cluster.attributes.extent[3] = bean.lat;
-            }*/
-
-            // increment the count
-            //cluster.attributes.clusterCount++;
-            // attributes might not exist
-//            if (!bean.hasOwnProperty("attributes")) {
-//                bean.attributes = {};
-//            }
-//            // give the graphic a cluster id
-//            bean.attributes.clusterId = cluster.attributes.clusterId;
         },
 
         // point passed to clusterCreate isn't within the
@@ -271,13 +183,6 @@ define([
             cbean.beans.push(bean);
             this._CbeanData.push(cbean);
 
-           /* var clusterBean = {};
-            clusterBean.Id = this._CbeanData.length + 1;
-            clusterBean.beans =[];
-            clusterBean.beans.push(bean);
-            clusterBean.lat = bean.lat;
-            clusterBean.lng = bean.lng;
-            this._CbeanData.push(clusterBean);*/
         },
 
         _showAllClusters: function () {
