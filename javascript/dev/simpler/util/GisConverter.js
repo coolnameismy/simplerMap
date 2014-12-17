@@ -7,13 +7,27 @@ define(["dojo/_base/declare","esri/geometry/webMercatorUtils"],function(declare,
         ConvertToLatlngArray:function(geometry)
         {
             var latlngArray = [];
-            for(var i=0;i<geometry.paths[0].length;i++)
+            //路径转化
+            if(geometry.type=="polyline")
             {
-                var point = webMercatorUtils.xyToLngLat(geometry.paths[0][i][0], geometry.paths[0][i][1]);
-                var latlng = {lng:point[0],lat:point[1]};
-                latlngArray.push(latlng);
+                for(var i=0;i<geometry.paths[0].length;i++)
+                {
+                    var point = webMercatorUtils.xyToLngLat(geometry.paths[0][i][0], geometry.paths[0][i][1]);
+                    var latlng = {lng:point[0],lat:point[1]};
+                    latlngArray.push(latlng);
+                }
             }
-             return latlngArray
+            //多边形转换,圆
+            if(geometry.type=="polygon")
+            {
+                for(var i=0;i<geometry.rings[0].length;i++)
+                {
+                    var point = webMercatorUtils.xyToLngLat(geometry.rings[0][i][0], geometry.rings[0][i][1]);
+                    var latlng = {lng:point[0],lat:point[1]};
+                    latlngArray.push(latlng);
+                }
+            }
+            return latlngArray
         }
 
     }) 

@@ -32,7 +32,6 @@
                     "dojo/_base/declare",
                     "esri/symbols/TextSymbol",
                     "esri/Color"
-
                 ],
                 function (BeanBase,ClusterBeanBase,declare,TextSymbol,Color) {
                     MyCarBean = declare(BeanBase, {
@@ -82,7 +81,7 @@
                             if(this.isClustered)
                             {
                                 //聚集图标
-                                var symbol = new esri.symbol.PictureMarkerSymbol(this.icon, 32, 32).setAngle(0).setOffset(0, 15);
+                                var symbol = new esri.symbol.PictureMarkerSymbol(this.icon, 64, 64).setAngle(0).setOffset(0, 15);
                                 var geometry = esri.geometry.Point(this.lng, this.lat);
                                 //需要把字段添加到属性中，这样在infoTemplate才可以动态绑定到字段的值
                                 var attr = {
@@ -91,7 +90,7 @@
                                 //信息窗口
                                 var infoTemplate = new esri.InfoTemplate();
                                 infoTemplate.setTitle("${count}");
-                                infoTemplate.setContent(" <div>共有车辆::${count}</div>");
+                                infoTemplate.setContent(" <div>共有车辆:${count}</div>");
                                 var graphic = new esri.Graphic(geometry, symbol, attr, infoTemplate);
                                 graphics.push(graphic);
                                 //数量
@@ -121,6 +120,7 @@
 
 
         require([
+            "simpler/map/SimplerMap",
             "dojo/parser",
             "dojo/ready",
             "dojo/_base/array",
@@ -150,7 +150,7 @@
             "dijit/layout/ContentPane",
             "dojo/domReady!"
         ], function(
-                parser, ready, arrayUtils, Color, domStyle, query,
+                SimplerMap,parser, ready, arrayUtils, Color, domStyle, query,
                 Map, esriRequest, Graphic, Extent,
                 SimpleMarkerSymbol, SimpleFillSymbol, PictureMarkerSymbol, ClassBreaksRenderer,
                 GraphicsLayer, SpatialReference, PopupTemplate, Point, webMercatorUtils,
@@ -158,18 +158,15 @@
                 ) {
             ready(function() {
                 parser.parse();
-
                 OverrideBean();
 
-                var popupOptions = {
-                    "markerSymbol": new SimpleMarkerSymbol("circle", 20, null, new Color([0, 0, 0, 0.25])),
-                    "marginLeft": "20",
-                    "marginTop": "20"
-                };
-                map = new Map("map", {
-                    basemap: "oceans",
+                map = new SimplerMap("map", {
                     center: [106.542556, 29.568679],
-                    zoom: 6
+                    zoom: 4,
+                    logo: false,
+                    //设置地图级别
+                    minZoom: 4,
+                    maxZoom: 18
                 });
 
                 map.on("load", function() {
@@ -208,98 +205,27 @@
                             if(car != undefined)   data.push(car);
                         }
                         catch(err){
-                            alert(err);
+                            //alert(err);
                         }
                     }
 
-                    // popupTemplate to work with attributes specific to this dataset
-                    var popupTemplate = new PopupTemplate({
-                        "title": "",
-                        "fieldInfos": [{
-                            "fieldName": "Caption",
-                            visible: true
-                        }, {
-                            "fieldName": "Name",
-                            "label": "By",
-                            visible: true
-                        }, {
-                            "fieldName": "Link",
-                            "label": "On Instagram",
-                            visible: true
-                        }],
-                        "mediaInfos": [{
-                            "title": "",
-                            "caption": "",
-                            "type": "image",
-                            "value": {
-                                "sourceURL": "{Image}",
-                                "linkURL": "{Link}"
-                            }
-                        }]
-                    });
-
-                    // cluster layer that uses OpenLayers style clustering
                     clusterLayer = new ClusterLayer({
                         "data": data,
-                        "distance": 100,
+                        "distance": 50,
                         "id": "clusters",
-                        "labelColor": "#fff",
-                        "labelOffset": 10,
                         "resolution": map.extent.getWidth() / map.width,
-                        "singleColor": "#888",
-
+                        //聚合和非聚合类
                         "CbeanType":MyClusterBean,
                         "beanType":MyCarBean
                     });
-                    var defaultSym = new SimpleMarkerSymbol().setSize(4);
-                    var renderer = new ClassBreaksRenderer(defaultSym, "clusterCount");
-
-                    var picBaseUrl = "http://static.arcgis.com/images/Symbols/Shapes/";
-                    var blue = new PictureMarkerSymbol(picBaseUrl + "BluePin1LargeB.png", 32, 32).setOffset(0, 15);
-                    var green = new PictureMarkerSymbol(picBaseUrl + "GreenPin1LargeB.png", 64, 64).setOffset(0, 15);
-                    var red = new PictureMarkerSymbol(picBaseUrl + "RedPin1LargeB.png", 72, 72).setOffset(0, 15);
-                    renderer.addBreak(0, 2, blue);
-                    renderer.addBreak(2, 200, green);
-                    renderer.addBreak(200, 1001, red);
-
-                    clusterLayer.setRenderer(renderer);
                     map.addLayer(clusterLayer);
-
-                    // close the info window when the map is clicked
-                    /*  map.on("click", cleanUp);
-                    // close the info window when esc is pressed
-                    map.on("key-down", function(e) {
-                        if (e.keyCode === 27) {
-                            cleanUp();
-                        }
-                    });*/
-                }
-
-                function cleanUp() {
-                    map.infoWindow.hide();
-                    clusterLayer.clearSingles();
                 }
 
                 function error(err) {
                     console.log("something failed: ", err);
                 }
 
-                // show cluster extents...
-                // never called directly but useful from the console
-                window.showExtents = function() {
-                    var extents = map.getLayer("clusterExtents");
-                    if ( extents ) {
-                        map.removeLayer(extents);
-                    }
-                    extents = new GraphicsLayer({ id: "clusterExtents" });
-                    var sym = new SimpleFillSymbol().setColor(new Color([205, 193, 197, 0.5]));
 
-                    arrayUtils.forEach(clusterLayer._clusters, function(c, idx) {
-                        var e = c.attributes.extent;
-                        extents.add(new Graphic(new Extent(e[0], e[1], e[2], e[3], map.spatialReference), sym));
-                    }, this);
-                    map.addLayer(extents, 0);
-                };
             });
         });
     </script>

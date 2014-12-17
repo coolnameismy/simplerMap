@@ -15,7 +15,6 @@
         }
     </style>
 
-
     <!--<script src="http://202.102.101.74:8012/simplerMap/javascript/v1.0/init.js"></script>-->
     <script src="http://localhost:83/simplerMap/javascript/dev/init.js"></script>
     <script>
@@ -24,7 +23,8 @@
         dojo.ready(mapInit);
         function mapInit() {
             require([
-                       "simpler/map/SimplerMap"
+                       "simpler/map/SimplerMap",
+                        "esri/toolbars/draw"
                     ],
                    function (SimplerMap)
                    {
@@ -65,7 +65,27 @@
             map.Basic.changeMapLayer(mapTyep);
         }
 
-
+        function DrawPolyline() {
+            map.DrawManager.drawPloyLine(DrawCallback);
+        }
+        function DrawRect() {
+            map.DrawManager.drawRect(DrawCallback);
+        }
+        function DrawCallback(geometry) {
+            alert(geometry.toString());
+        }
+        function DrawCircle() {
+            map.DrawManager.drawCircle(DrawCallback);
+        }
+        function DrawPloygon() {
+            map.DrawManager.drawPloygon(DrawCallback);
+        }
+        function measuringDistance() {
+            map.DrawManager.measuringDistance(DrawCallback);
+        }
+        function measuringPerimeter() {
+            map.DrawManager.measuringPerimeter(DrawCallback);
+        }
     </script>
 
 <body>
@@ -77,6 +97,12 @@
         <input type="button" value="切换arcgis地图" onclick="changeMap('ARCGIS')" />
         <input type="button" value="切换鸿信地图"  onclick="changeMap('HX')" />
         <input type="button" value="切换街景地图"  onclick="changeMap('OSM')" />
+        <input type="button" value="画路径"  onclick="DrawPolyline()" />
+        <input type="button" value="画矩形"  onclick="DrawRect()" />
+        <input type="button" value="画圆"  onclick="DrawCircle()" />
+        <input type="button" value="画多边形"  onclick="DrawPloygon()" />
+        <input type="button" value="测距离"  onclick="measuringDistance()" />
+        <input type="button" value="测周长"  onclick="measuringPerimeter()" />
     </div>
     <div id="map"> </div>
 </body>

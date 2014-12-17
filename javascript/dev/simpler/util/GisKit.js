@@ -60,6 +60,30 @@ define(["dojo/_base/declare", "esri/geometry/Extent"],function(declare,Extent){
             );
 
             return result;
+        },
+        //获取多点之间距离和
+        GetPiontsDistance:function(latlngs)
+        {
+            var distance = 0;
+            for(var i=1;i<latlngs.length;i++){
+                var preLatlng = latlngs[i-1];
+                var currLatlng = latlngs[i];
+                var d_EarthRadius = 6378.137;
+                var radLat1 = this.getRadians(preLatlng.lat);
+                var radLat2 = this.getRadians(currLatlng.lat);
+                var radLat = this.getRadians(preLatlng.lat) - this.getRadians(currLatlng.lat);
+                var radLng = this.getRadians(preLatlng.lng) - this.getRadians(currLatlng.lng);
+                var s = 2*Math.asin(Math.sqrt(Math.pow(Math.sin(radLat/2), 2) +
+                    Math.cos(radLat1)*Math.cos(radLat2)*Math.pow(Math.sin(radLng/2), 2)));
+                s = s*d_EarthRadius;
+                s = Math.round(s*10000)/10;
+                distance += s;
+            }
+            return distance;
+        },
+        //获取弧度
+        getRadians:function(d){
+            return d*Math.PI/180.0;
         }
 
     })
