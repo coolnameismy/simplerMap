@@ -23,10 +23,9 @@
         dojo.ready(mapInit);
         function mapInit() {
             require([
-                       "simpler/map/SimplerMap",
-                        "esri/toolbars/draw"
+                       "simpler/map/SimplerMap","simpler/map/userMapLayer/BaiduLayer"
                     ],
-                   function (SimplerMap)
+                   function (SimplerMap,BaiduLayer)
                    {
                         //初始化地图
                         map = new SimplerMap("map", {
@@ -86,6 +85,11 @@
         function measuringPerimeter() {
             map.DrawManager.measuringPerimeter(DrawCallback);
         }
+        function showBaiduMap() {
+                var BaiduLayer = require("simpler/map/userMapLayer/BaiduLayer");
+                var baiduMap = new BaiduLayer();
+                map.addLayer(baiduMap);
+        }
     </script>
 
 <body>
@@ -103,6 +107,7 @@
         <input type="button" value="画多边形"  onclick="DrawPloygon()" />
         <input type="button" value="测距离"  onclick="measuringDistance()" />
         <input type="button" value="测周长"  onclick="measuringPerimeter()" />
+        <input type="button" value="自定义tile层的百度地图"  onclick="showBaiduMap()" />
     </div>
     <div id="map"> </div>
 </body>
