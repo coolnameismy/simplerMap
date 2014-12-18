@@ -37,6 +37,21 @@ define(["dojo/_base/declare"], function (declare) {
                 this._hash = {};
                 this._count = 0;
             }
+            this.getAll = function () {
+                var all = [];
+                for (var p in this._hash) {
+                    // 方法
+                    if (typeof ( this._hash[p]) == " function ") {
+
+                    }
+                    //属性
+                    else {
+                        // p 为属性名称，_hash[p]为对应属性的值
+                        all.push(this._hash[p]);
+                    }
+                }
+                return all;
+            }
         }
 
     })

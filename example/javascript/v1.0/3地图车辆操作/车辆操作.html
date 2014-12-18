@@ -185,6 +185,17 @@
              "spatialReference":{"wkid":4326}
             });  */
         }
+        function selectCarInArea(){
+            map.CarManager.selectCarInArea(SelectedCallback);
+        }
+        function SelectedCallback(cars) {
+            var tips = "总共选则了"+ cars.length + "辆车"+"分别为：";
+            for(var i=0;i<cars.length;i++)
+            {
+                tips +=" | "+ cars[i].attributes.carNo +" | ";
+            }
+            alert(tips);
+        }
     </script>
 
 <body>
@@ -198,6 +209,7 @@
         <input type="button" value="更新一组车"  onclick="updateCars()" />
         <input type="button" value="查找一辆车"  onclick="findCar('car1')" />
         <input type="button" value="查找一组车"  onclick="findCars()" />
+        <input type="button" value="地图选择一组车"  onclick="selectCarInArea()" />
     </div>
     <div id="map"> </div>
 </body>
