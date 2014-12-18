@@ -1,0 +1,52 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+
+    <link rel="stylesheet" type="text/css" href="http://202.102.101.74:8012/simplerMap/javascript/v1.0/dijit/themes/tundra/tundra.css"/>
+    <link rel="stylesheet" type="text/css" href="http://202.102.101.74:8012/simplerMap/javascript/v1.0/esri/css/esri.css" />
+    <style>
+        html, body, #map {
+            height: 100%; width: 100%; margin: 0; padding: 0;
+        }
+    </style>
+
+
+    <!--<script src="http://202.102.101.74:8012/simplerMap/javascript/v1.0/init.js"></script>-->
+    <!--<script src="http://localhost:83/simplerMap/javascript/dev/init.js"></script>-->
+    <script src="http://115.29.226.138:8083/simplerMap/javascript/v1.1/init.js"></script>
+    <script>
+        //初始化地图代码
+        dojo.ready(mapInit);
+        function mapInit() {
+
+            require([
+                        "simpler/map/SimplerMap"
+                    ],
+                    function (SimplerMap)
+                   {
+                        //初始化地图
+                        map = new SimplerMap("map", {
+                            center: [118, 30.5],
+                            zoom: 4,
+                            logo: false,
+                            //设置地图级别
+                            minZoom: 4,
+                            maxZoom: 18
+                        });
+                    }
+            );
+        }
+    </script>
+
+<body>
+    <div id="map"> </div>
+</body>
+</html>
+
+
+
